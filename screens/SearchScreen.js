@@ -22,13 +22,13 @@ class SearchScreen extends React.Component {
     }
     submitSearch = () => {
         console.log('====================================');
-        console.log(this.state.search);
+        console.log('search : ', this.state.search);
         console.log('====================================');
     }
 
     render() {
         console.log('====================================');
-        console.log(this.props.currentWeather);
+        console.log('currentWeather : ', this.props.currentWeather);
         console.log('====================================');
         return (
             <View style={styles.container}>
