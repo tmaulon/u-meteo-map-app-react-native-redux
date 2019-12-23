@@ -6,13 +6,14 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from "react-native-responsive-screen";
+import { connect } from 'react-redux';
 
 const DEFAULT_COORDS = {
     lat: 48.859268,
     lng: 2.347060
 };
 
-export default class SearchScreen extends React.Component {
+class SearchScreen extends React.Component {
     state = {
         search: ""
     }
@@ -26,6 +27,9 @@ export default class SearchScreen extends React.Component {
     }
 
     render() {
+        console.log('====================================');
+        console.log(this.props.currentWeather);
+        console.log('====================================');
         return (
             <View style={styles.container}>
                 <MapView
@@ -65,3 +69,10 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height,
     },
 });
+
+const mapStoreToProps = (store) => {
+    return {
+        currentWeather: store.weather.data
+    }
+}
+export default connect(mapStoreToProps, undefined)(SearchScreen);
