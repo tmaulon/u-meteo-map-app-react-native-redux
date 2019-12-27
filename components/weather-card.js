@@ -120,7 +120,9 @@ class WeatherCard extends Component {
     }
 
     goToDetail = () => {
-        this.props.navigation.push("Detail")
+        this.props.navigation.push("Detail", {
+            city: this.props.currentWeather.name
+        })
     }
 
     renderMoreDetail() {
