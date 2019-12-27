@@ -5,6 +5,7 @@ import {
     heightPercentageToDP as hp
 } from "react-native-responsive-screen";
 import { kelvinToCelsius } from '../services/temperature';
+import { Button } from 'react-native-elements';
 
 const CARD_INITIAL_POSITION_Y = hp("80%");
 const CARD_INITIAL_POSITION_X = wp("5%");
@@ -111,6 +112,22 @@ export default class WeatherCard extends Component {
                     </Text>
                     <Image style={styles.temperaturePicture} source={{ uri: `${ICON_URL}${this.props.currentWeather.weather[0].icon}.png` }} />
                 </View>
+                {this.state.isOpen && this.renderMoreDetail()}
+            </View>
+        )
+    }
+
+    renderMoreDetail() {
+        return (
+            <View>
+                <View style={{ alignItems: "center" }}>
+                    <Text>Humidity : {this.props.currentWeather.main.humidity} %</Text>
+                    <Text>Pressure : {this.props.currentWeather.main.pressure} hpa</Text>
+                    <Text>Max temperature : {kelvinToCelsius(this.props.currentWeather.main.temp_max)}</Text>
+                    <Text>Min temperature : {kelvinToCelsius(this.props.currentWeather.main.temp_min)}</Text>
+                    <Text>Wind Speed : {this.props.currentWeather.wind.speed} km/h</Text>
+                </View>
+                <Button containerStyle={{ marginTop: hp("3%"), width: wp("80%") }} onPress={() => console.log("button pressed")} title="See 5 days forecast" />
             </View>
         )
     }
