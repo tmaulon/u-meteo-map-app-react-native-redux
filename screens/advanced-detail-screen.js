@@ -8,36 +8,51 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from "react-native-responsive-screen";
+import { kelvinToCelsius } from '../services/temperature'
 
 export class AdvancedDetailScreen extends Component {
 
     componentDidMount() {
         const city = this.props.navigation.getParam("city");
-        this.props.getForecastWeatherByCity(city)
-        console.log('====================================');
-        console.log('city : ', city);
-        console.log('====================================');
+        this.props.getForecastWeatherByCity(city);
+    }
+
+    getTemperatures() {
+        return this.props.forecastWeather.list.map(
+            weather => {
+                return kelvinToCelsius(weather.main.temp);
+            }
+        );
+    }
+
+    getHumidities() {
+        return this.props.forecastWeather.list.map(
+            weather => {
+                return weather.main.humidity;
+            }
+        );
+    }
+
+    getLabels() {
+        return this.props.forecastWeather.list.map((_, index) => {
+            let day = index / 8;
+            return index === 0 ? "t" : index % 8 === 0 ? "t+" + day + "j" : "";
+        })
     }
 
     renderChart(data) {
         return (
             <LineChart
                 data={{
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-                    datasets: [{
-                        data: [
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100,
-                            Math.random() * 100
-                        ]
-                    }]
+                    labels: this.getLabels(),
+                    datasets: [
+                        {
+                            data
+                        }
+                    ]
                 }}
                 width={wp("90%")} // from react-native
                 height={hp("30%")}
-                yAxisLabel={'$'}
                 chartConfig={{
                     backgroundColor: '#e26a00',
                     backgroundGradientFrom: '#fb8c00',
@@ -57,13 +72,28 @@ export class AdvancedDetailScreen extends Component {
         )
     }
 
+    renderCharts() {
+        return (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 30, paddingTop: hp("1%") }}>
+                    {this.props.forecastWeather.city.name} 5 days forecast
+            </Text>
+                <Text style={{ marginBottom: hp("2%"), fontSize: 20 }}>
+                    Temperatures (C°)
+            </Text>
+                {this.renderChart(this.getTemperatures())}
+                <Text style={{ marginTop: hp("3%"), marginBottom: hp("2%"), fontSize: 20 }}>
+                    Humidity (%)
+            </Text>
+                {this.renderChart(this.getHumidities())}
+            </View>
+        )
+    }
+
     render() {
         return (
             <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-                <Text> Température in {this.city} </Text>
-                {
-                    this.props.forecastWeather ? this.renderChart({}) : <Text>Loading...</Text>
-                }
+                {this.props.forecastWeather ? this.renderCharts() : <Text>Loading...</Text>}
             </View>
         )
     }
