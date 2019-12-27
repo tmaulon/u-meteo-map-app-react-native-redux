@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { Animated, Text, StyleSheet, View, PanResponder } from 'react-native'
+import { Animated, Text, StyleSheet, View, PanResponder, Image } from 'react-native'
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
 } from "react-native-responsive-screen";
+import { kelvinToCelsius } from '../services/temperature';
 
-// const CARD_INITIAL_POSITION_Y = 0;
 const CARD_INITIAL_POSITION_Y = hp("80%");
 const CARD_INITIAL_POSITION_X = wp("5%");
 
@@ -13,6 +13,8 @@ const TRESHOLD_TO_TOP = hp("75%")
 const TRESHOLD_TO_BOTTOM = hp("70%")
 const CARD_OPEN_POSITION = hp("45%")
 const MAX_DRAG_ZONE_WHEN_OPEN = hp("65%")
+
+const ICON_URL = "http://openweathermap.org/img/w/"
 
 export default class WeatherCard extends Component {
 
@@ -95,10 +97,53 @@ export default class WeatherCard extends Component {
         };
     }
 
+    renderHeader() {
+        return (
+            <View style={styles.headerWrapper}>
+                <Text style={styles.weatherName}>
+                    {this.props.currentWeather.name}
+                </Text>
+                <View style={styles.contentWrapper}>
+                    <Text style={styles.mainTemperature}>
+                        {
+                            kelvinToCelsius(this.props.currentWeather.main.temp) + " C°"
+                        }
+                    </Text>
+                    <Image style={styles.temperaturePicture} source={{ uri: `${ICON_URL}${this.props.currentWeather.weather[0].icon}.png` }} />
+                </View>
+            </View>
+        )
+    }
+
     render() {
         return (
             this.state.panResponder ?
-                <Animated.View {...this.state.panResponder.panHandlers} style={this.getCardStyle()} /> : <View />
+                <Animated.View {...this.state.panResponder.panHandlers} style={this.getCardStyle()}>
+                    {this.renderHeader()}
+                </Animated.View>
+                : <View />
         )
     }
 }
+
+const styles = StyleSheet.create({
+    headerWrapper: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    weatherName: {
+        fontSize: 30,
+        marginTop: hp("1%")
+    },
+    contentWrapper: {
+        flexDirection: "row"
+    },
+    mainTemperature: {
+        marginTop: hp("1%"),
+        fontSize: 35
+    },
+    temperaturePicture: {
+        height: 60,
+        width: 60
+    },
+})
