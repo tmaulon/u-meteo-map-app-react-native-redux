@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import IndexScreen from './screens/index-screen';
 import SearchScreen from './screens/search-screen';
 import AdvancedDetailScreen from './screens/advanced-detail-screen';
 import store from './store';
@@ -19,11 +20,12 @@ export default class App extends React.Component {
 
 const StackNavigator = createStackNavigator(
   {
+    Index: IndexScreen,
     Search: SearchScreen,
     Detail: AdvancedDetailScreen
   },
   {
-    initialRouteName: "Search",
+    initialRouteName: "Index",
     headerMode: "none"
   }
 )
