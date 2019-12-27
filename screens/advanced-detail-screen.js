@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, Button } from 'react-native'
 import { connect } from 'react-redux'
 import { withNavigation } from 'react-navigation'
 import { getForecastWeatherByCity } from '../actions'
@@ -72,20 +72,27 @@ export class AdvancedDetailScreen extends Component {
         )
     }
 
+    goBack = () => {
+        this.props.navigation.goBack();
+    }
+
     renderCharts() {
         return (
             <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ fontSize: 30, paddingTop: hp("1%") }}>
                     {this.props.forecastWeather.city.name} 5 days forecast
-            </Text>
+                    </Text>
                 <Text style={{ marginBottom: hp("2%"), fontSize: 20 }}>
                     Temperatures (C°)
-            </Text>
+                    </Text>
                 {this.renderChart(this.getTemperatures())}
                 <Text style={{ marginTop: hp("3%"), marginBottom: hp("2%"), fontSize: 20 }}>
                     Humidity (%)
-            </Text>
+                    </Text>
+
                 {this.renderChart(this.getHumidities())}
+
+                <Button onPress={this.goBack} title="Back" containerStyle={{ marginTop: hp("1%"), width: wp("90%") }} />
             </View>
         )
     }
