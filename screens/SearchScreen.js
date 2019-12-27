@@ -8,6 +8,7 @@ import {
 } from "react-native-responsive-screen";
 import { connect } from 'react-redux';
 import { getCurrentWeatherByCity } from '../actions/index';
+import WeatherCard from '../components/weather-card';
 
 const DEFAULT_COORDS = {
     lat: 48.859268,
@@ -36,11 +37,18 @@ class SearchScreen extends React.Component {
             <View style={styles.container}>
                 <MapView
                     region={{
-                        latitude: DEFAULT_COORDS.lat, longitude: DEFAULT_COORDS.lng, latitudeDelta: 0.2000, longitudeDelta: 0.1000
+                        latitude: this.props.currentWeather ? this.props.currentWeather.coord.lat : DEFAULT_COORDS.lat,
+                        longitude: this.props.currentWeather ? this.props.currentWeather.coord.lon : DEFAULT_COORDS.lng,
+                        latitudeDelta: 0.2000,
+                        longitudeDelta: 0.1000
                     }}
                     scrollEnabled={false}
                     liteMode={true}
                     style={styles.mapStyle} />
+                {
+                    this.props.currentWeather && <WeatherCard currentWeather={this.props.currentWeather} />
+                }
+
                 <SearchBar
                     lightTheme
                     onChangeText={this.updateSearch}
@@ -74,7 +82,7 @@ const styles = StyleSheet.create({
 
 const mapStoreToProps = (store) => {
     return {
-        currentWeather: store.weather.data
+        currentWeather: store.weather.currentWeather
     }
 }
 const mapDispatchToProps = {
