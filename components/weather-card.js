@@ -12,6 +12,7 @@ const CARD_INITIAL_POSITION_X = wp("5%");
 const TRESHOLD_TO_TOP = hp("75%")
 const TRESHOLD_TO_BOTTOM = hp("70%")
 const CARD_OPEN_POSITION = hp("45%")
+const MAX_DRAG_ZONE_WHEN_OPEN = hp("65%")
 
 export default class WeatherCard extends Component {
 
@@ -28,10 +29,12 @@ export default class WeatherCard extends Component {
             onStartShouldSetPanResponder: () => true,
 
             onPanResponderMove: (e, gesture) => {
-                this.position.setValue({
-                    x: CARD_INITIAL_POSITION_X,
-                    y: gesture.moveY
-                })
+                if (!(this.state.isOpen && gesture.y0 > MAX_DRAG_ZONE_WHEN_OPEN)) {
+                    this.position.setValue({
+                        x: CARD_INITIAL_POSITION_X,
+                        y: gesture.moveY
+                    })
+                }
             },
 
             onPanResponderRelease: (e, gesture) => {
@@ -42,7 +45,13 @@ export default class WeatherCard extends Component {
                         this.resetPosition()
                     }
                 } else {
-
+                    if (gesture.moveY <= TRESHOLD_TO_BOTTOM) {
+                        this.setOpenPosition()
+                    } else {
+                        if (gesture.y0 < MAX_DRAG_ZONE_WHEN_OPEN) {
+                            this.resetPosition(() => this.setState({ isOpen: false }))
+                        }
+                    }
                 }
             }
 
@@ -59,13 +68,13 @@ export default class WeatherCard extends Component {
             }
         }).start(() => done && done())
     }
-    resetPosition = () => {
+    resetPosition = (done) => {
         Animated.spring(this.position, {
             toValue: {
                 x: CARD_INITIAL_POSITION_X,
                 y: CARD_INITIAL_POSITION_Y
             }
-        }).start()
+        }).start(() => done && done())
     }
 
     getCardStyle() {
