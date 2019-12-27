@@ -1,5 +1,5 @@
 import axios from 'axios';
-import API_KEY from '../constant';
+import { API_KEY } from '../constant';
 import { SET_CURRENT_WHEATHER } from './action-types';
 
 const WEAHTER_BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
