@@ -6,6 +6,7 @@ import {
 } from "react-native-responsive-screen";
 import { kelvinToCelsius } from '../services/temperature';
 import { Button } from 'react-native-elements';
+import { withNavigation } from 'react-navigation'
 
 const CARD_INITIAL_POSITION_Y = hp("80%");
 const CARD_INITIAL_POSITION_X = wp("5%");
@@ -17,11 +18,17 @@ const MAX_DRAG_ZONE_WHEN_OPEN = hp("65%")
 
 const ICON_URL = "http://openweathermap.org/img/w/"
 
-export default class WeatherCard extends Component {
+class WeatherCard extends Component {
 
     state = { panResponder: undefined, isOpen: false }
 
     componentDidMount() {
+        this.onFocusListener = this.props.navigation.addListener(
+            "willFocus",
+            payload => {
+                this.resetPosition(() => this.setState({ isOpen: false }))
+            }
+        )
         this.position = new Animated.ValueXY()
         this.position.setValue({
             x: CARD_INITIAL_POSITION_X,
@@ -71,6 +78,7 @@ export default class WeatherCard extends Component {
             }
         }).start(() => done && done())
     }
+
     resetPosition = (done) => {
         Animated.spring(this.position, {
             toValue: {
@@ -117,6 +125,12 @@ export default class WeatherCard extends Component {
         )
     }
 
+    goToDetail = () => {
+        this.props.navigation.push("Detail", {
+            city: this.props.currentWeather.name
+        })
+    }
+
     renderMoreDetail() {
         return (
             <View>
@@ -127,7 +141,7 @@ export default class WeatherCard extends Component {
                     <Text>Min temperature : {kelvinToCelsius(this.props.currentWeather.main.temp_min)}</Text>
                     <Text>Wind Speed : {this.props.currentWeather.wind.speed} km/h</Text>
                 </View>
-                <Button containerStyle={{ marginTop: hp("3%"), width: wp("80%") }} onPress={() => console.log("button pressed")} title="See 5 days forecast" />
+                <Button containerStyle={{ marginTop: hp("3%"), width: wp("80%") }} onPress={this.goToDetail} title="See 5 days forecast" />
             </View>
         )
     }
@@ -164,3 +178,5 @@ const styles = StyleSheet.create({
         width: 60
     },
 })
+
+export default withNavigation(WeatherCard);
